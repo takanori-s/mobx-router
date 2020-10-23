@@ -40,4 +40,19 @@ export const startRouter = <T extends Store>(routes: RoutesConfig<T>, store: T, 
             }
         }
     });
+
+    if (!config.html5history) {
+        // catch up the case, in which user input a path in browser URL bar
+        // but currentPath was not changed and currentPath is inconsistent with browser URL bar
+        // (such as the case beforeEnter returned false, or routed to same route as current)
+        window.addEventListener('hashchange', () => {
+            const { currentPath } = store.router;
+            if (currentPath) {
+                const hash = `#${currentPath}`;
+                if (hash !== window.location.hash) {
+                    window.history.replaceState(null, null || "", `/${hash}`);
+                }
+            }
+        })
+    }
 };
