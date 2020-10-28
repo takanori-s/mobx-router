@@ -77,31 +77,31 @@ export class RouterStore<S extends Store> {
             );
 
         runInAction(() => {
+            const nextParams = toJS(paramsObj) as P
+            const nextQueryParams = toJS(queryParamsObj) as Q;
+            
             this.currentRoute = route;
-            this.params = toJS(paramsObj) as P;
-            this.queryParams = toJS(queryParamsObj) as Q;
+            this.params = nextParams;
+            this.queryParams = nextQueryParams;
+
+            routeChanged &&
+                route.onEnter &&
+                route.onEnter(route,
+                    nextParams,
+                    this.store,
+                    nextQueryParams,
+                );
+    
+            !routeChanged &&
+                this.currentRoute &&
+                this.currentRoute.onParamsChange &&
+                this.currentRoute.onParamsChange(
+                    this.currentRoute,
+                    nextParams,
+                    this.store,
+                    nextQueryParams
+                );
         });
-
-        const nextParams = toJS(this.params as P);
-        const nextQueryParams = toJS(this.queryParams as Q);
-
-        routeChanged &&
-            route.onEnter &&
-            route.onEnter(route,
-                nextParams,
-                this.store,
-                nextQueryParams,
-            );
-
-        !routeChanged &&
-            this.currentRoute &&
-            this.currentRoute.onParamsChange &&
-            this.currentRoute.onParamsChange(
-                this.currentRoute,
-                nextParams,
-                this.store,
-                nextQueryParams
-            );
     }
 
     @computed
