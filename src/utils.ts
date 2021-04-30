@@ -3,7 +3,9 @@ import { Store } from "./router-store";
 import queryString from 'query-string';
 
 export interface DirectorConfig {
-    html5history?: boolean
+    html5history?: boolean;
+    notfound?(): void;
+    [key: string]: any;
 }
 
 export const isObject = (obj: any) =>
@@ -21,7 +23,7 @@ export const viewsForDirector = <T extends Store>(views: RoutesConfig<T>, store:
             let queryParamsObject;
             if (config.html5history === false) {
                 // hash routing (query parameter not stored in location.search)
-                const m = window.location.hash.match(/\?.*$/)
+                const m = window.location.hash.match(/\?.*$/);
                 if (m) {
                     queryParamsObject = queryString.parse(m[0]);
                 }
@@ -29,7 +31,7 @@ export const viewsForDirector = <T extends Store>(views: RoutesConfig<T>, store:
                 queryParamsObject = queryString.parse(window.location.search);
             }
             store.router.goTo(view as any, paramsObject || {} as RouteParams, queryParamsObject as QueryParams);
-        }
+        };
         return obj;
     }, {} as { [path: string]: (...paramsArr: string[]) => any });
 
