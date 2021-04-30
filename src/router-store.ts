@@ -1,4 +1,4 @@
-import { observable, computed, action, toJS, runInAction } from 'mobx';
+import { observable, computed, action, toJS, runInAction, makeObservable } from 'mobx';
 import { Route } from '.';
 import { RouteParams, QueryParams } from './route';
 
@@ -9,11 +9,13 @@ export type Store = {
 export class RouterStore<S extends Store> {
     @observable params: RouteParams = {};
     @observable queryParams: QueryParams = {};
-    @observable currentRoute?: Route<S, any, any>;
+    @observable currentRoute?: Route<S, any, any> = undefined;
 
     readonly store: S;
 
     constructor(store: S) {
+        makeObservable(this)
+        
         this.store = store;
 
         //bind
